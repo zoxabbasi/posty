@@ -3,7 +3,8 @@
 @section('content')
     <div class="flex justify-center">
         <div class="w-8/12 bg-white p-6 rounded-lg">
-            <form action="{{ route('posts') }}" method="POST" class="mb-4">
+            @auth
+                 <form action="{{ route('posts') }}" method="POST" class="mb-4">
                 @csrf
                 <div class="mb-4">
                     <label for="body" class="sr-only">Body</label>
@@ -24,6 +25,8 @@
                     </button>
                 </div>
             </form>
+            @endauth
+
 
             @if ($posts->count())
                 @foreach ($posts as $post)

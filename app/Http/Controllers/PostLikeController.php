@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Mail\PostLiked;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PostLikeController extends Controller
 {
@@ -27,9 +29,14 @@ class PostLikeController extends Controller
             'user_id' => $request->user()->id,
             // 'post_id' => $request->posts()->id,
         ]);
-
         // We want a user to like a post once, head to post model to add protection
 
+        if (!$post->likes()->onlyTrashed()->where('user_id', $request->user()->id)->count()) {
+            // If this post was liked by the user then don't send an email
+            // Using soft deletes here
+
+            Mail::to($post->user)->send(new PostLiked(auth()->user(), $post));
+        }
         return back();
     }
 
